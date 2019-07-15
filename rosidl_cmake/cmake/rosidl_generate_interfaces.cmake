@@ -195,10 +195,13 @@ macro(rosidl_generate_interfaces target)
 
   # Convert action files into messages and services
   if(_action_files)
-    set(_convert_actions_target "${target}+_convert_actions_to_msg_and_srv")
+    message(STATUS "@@@ _action_files: ${_action_files}")
+    set(_convert_actions_target "${target}_convert_actions_to_msg_and_srv")
     rosidl_convert_actions_to_msg_and_srv(${_convert_actions_target} ${_action_files}
       OUTPUT_IDL_VAR _action_msg_and_srv_files)
   endif()
+
+  message(STATUS "@@@ OUTPUT_IDL_VAR: ${_action_msg_and_srv_files}")
 
   add_custom_target(
     ${target} ALL
@@ -212,6 +215,7 @@ macro(rosidl_generate_interfaces target)
 
   # Tell CMake in this directory scope that these files are generated
   foreach(_idl_file ${_action_msg_and_srv_files})
+    message(STATUS "@@@ marking ${_idl_file} as generated")
     list(APPEND _non_idl_files "${_idl_file}")
     set_property(SOURCE ${_idl_file} PROPERTY GENERATED 1)
   endforeach()
@@ -274,7 +278,6 @@ macro(rosidl_generate_interfaces target)
   set(rosidl_generate_interfaces_IDL_TUPLES ${_idl_tuples})
   unset(rosidl_generate_interfaces_IDL_FILES)
   ament_execute_extensions("rosidl_generate_idl_interfaces")
-
   unset(rosidl_generate_interfaces_IDL_TUPLES)
   set(rosidl_generate_interfaces_IDL_FILES ${_non_idl_files})
   ament_execute_extensions("rosidl_generate_interfaces")

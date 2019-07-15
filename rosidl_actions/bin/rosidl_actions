@@ -7,21 +7,29 @@ import sys
 try:
     from rosidl_actions import generate_msg_and_srv
 except ImportError:
-    # modifying sys.path and importing the Python package with the same
-    # name as this script does not work on Windows
-    rosidl_actions_root = os.path.dirname(os.path.dirname(__file__))
-    rosidl_actions_module = os.path.join(
-        rosidl_actions_root, 'rosidl_actions', '__init__.py')
-    if not os.path.exists(rosidl_actions_module):
-        raise
-    from importlib.machinery import SourceFileLoader
-
-    loader = SourceFileLoader('rosidl_actions', rosidl_actions_module)
-    rosidl_actions = loader.load_module()
-    generate_msg_and_srv = rosidl_actions.generate_msg_and_srv
+    debug_path = '/users/sean/desktop/output.txt'
+    with open(debug_path, 'a') as debug_file:
+        # modifying sys.path and importing the Python package with the same name as this script does not work on Windows
+        debug_file.write('Failed to load module, retrying\n')
+        rosidl_actions_root = os.path.dirname(os.path.dirname(__file__))
+        rosidl_actions_module = os.path.join(
+            rosidl_actions_root, 'rosidl_actions', '__init__.py')
+        debug_file.write('Loading: %s\n' % rosidl_actions_module)
+        if not os.path.exists(rosidl_actions_module):
+            debug_file.write('Did not find it!\n')
+            raise
+        from importlib.machinery import SourceFileLoader
+        debug_file.write('Found it!\n')
+        loader = SourceFileLoader('rosidl_actions', rosidl_actions_module)
+        rosidl_actions = loader.load_module()
+        generate_msg_and_srv = rosidl_actions.generate_msg_and_srv
 
 
 def main(argv=sys.argv[1:]):
+    debug_path = '/users/sean/desktop/output.txt'
+    with open(debug_path, 'a') as debug_file:
+        debug_file.write('Inside main')
+
     parser = argparse.ArgumentParser(
         description='Generate .msg and .srv files for actions.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)

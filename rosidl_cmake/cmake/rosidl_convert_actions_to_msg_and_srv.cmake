@@ -47,6 +47,7 @@ function(rosidl_convert_actions_to_msg_and_srv target)
   set(_output_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_actions/${PROJECT_NAME}")
   set(_generated_action_idl_files "")
   foreach(_action_file ${_action_files})
+    message(STATUS "### Processing: ${_action_file}")
     get_filename_component(_parent_folder "${_action_file}" DIRECTORY)
     get_filename_component(_parent_folder "${_parent_folder}" NAME)
     get_filename_component(_action_name "${_action_file}" NAME_WE)
@@ -72,6 +73,8 @@ function(rosidl_convert_actions_to_msg_and_srv target)
       "${_output_path}/${_parent_folder}/${_action_name}_Feedback.msg")
   endforeach()
 
+  message(STATUS "### Generating files: ${_generated_action_idl_files}")
+
   # Write generator arguments
   set(generator_arguments_file "${CMAKE_CURRENT_BINARY_DIR}/rosidl_actions_convert_actions_to_msg_and_srv__arguments.json")
   rosidl_write_generator_arguments(
@@ -85,16 +88,20 @@ function(rosidl_convert_actions_to_msg_and_srv target)
 
   find_package(rosidl_actions REQUIRED)
 
+  set(generator_output_file "C:/users/sean/desktop/rosidl_actions_output.txt")
+  message(STATUS "### Logging to: ${generator_output_file}")
+  message(STATUS "### Executing: ${PYTHON_EXECUTABLE} ${rosidl_actions_BIN} --generator-arguments-file ${generator_arguments_file}")
   # Cmake boilerplate to trigger generation
   add_custom_command(
     OUTPUT ${_generated_action_idl_files}
-    COMMAND ${PYTHON_EXECUTABLE} ${rosidl_actions_BIN}
-    --generator-arguments-file "${generator_arguments_file}"
+    COMMAND ${PYTHON_EXECUTABLE} ${rosidl_actions_BIN} --generator-arguments-file "${generator_arguments_file}" > ${generator_output_file} 2>&1
+    COMMAND echo "hey" > "C:/users/sean/desktop/hey.txt"
     DEPENDS ${_action_files}
     COMMENT "Generating .msg and .srv for ROS .action interfaces"
     VERBATIM
   )
 
+  message(STATUS "### Target: ${target}")
   add_custom_target(
     ${target}
     DEPENDS
